@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Match Week — English Training</title>
+<style>
+  :root{
+    --pitch-dark: #14392B;
+    --pitch: #1E5C42;
+    --turf: #3E8B65;
+    --chalk: #F6F2E7;
+    --card: #FFFFFF;
+    --ink: #16211C;
+    --ink-soft: #4B5A52;
+    --tech-blue: #2F6FED;
+    --amber: #E0A030;
+    --line: #D8D2C0;
+    --radius: 10px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--chalk);
+    color: var(--ink);
+    padding: 0;
+  }
+
+  .wrap{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  /* ---- Masthead ---- */
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-bottom: 3px solid var(--pitch-dark);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+  .masthead h1{
+    font-size: 30px;
+    margin: 0;
+    letter-spacing: 0.2px;
+    color: var(--pitch-dark);
+    line-height: 1.1;
+  }
+  .masthead .sub{
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .kickoff-btn{
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    background: transparent;
+    border: 1px solid var(--pitch-dark);
+    color: var(--pitch-dark);
+    padding: 7px 12px;
+    border-radius: 999px;
+    cursor:pointer;
+    white-space: nowrap;
+  }
+  .kickoff-btn:hover{ background: var(--pitch-dark); color: var(--chalk); }
+
+  /* ---- Scoreboard ---- */
+  .scoreboard{
+    display:flex;
+    background: var(--pitch-dark);
+    color: var(--chalk);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-bottom: 26px;
+    gap: 24px;
+    align-items: center;
+  }
+  .score-main{
+    font-family: 'Courier New', monospace;
+    font-size: 40px;
+    font-weight: bold;
+    min-width: 90px;
+  }
+  .score-main span{ font-size: 18px; color: #B7C9BE; font-weight: normal; }
+  .score-detail{ font-size: 13px; line-height: 1.5; color: #CFE0D5; font-family: 'Courier New', monospace; }
+  .score-detail strong{ color: var(--chalk); }
+  .progress-bar{
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-fill{
+    height: 100%;
+    background: var(--amber);
+    transition: width 0.4s ease;
+  }
+
+  /* ---- Day cards ---- */
+  .day{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .day-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 13px 18px;
+    cursor: pointer;
+    border-left: 5px solid var(--turf);
+  }
+  .day-head.done{ border-left-color: var(--amber); }
+  .day-name{
+    font-size: 17px;
+    font-weight: bold;
+    color: var(--pitch-dark);
+  }
+  .day-meta{
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .day-tasks{
+    border-top: 1px solid var(--line);
+    padding: 6px 18px 14px;
+  }
+  .task{
+    display:flex;
+    align-items:flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .task:last-child{ border-bottom: none; }
+  .task input[type=checkbox]{
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--turf);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .task-text{ flex:1; }
+  .task-label{
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .task-label.checked{
+    text-decoration: line-through;
+    color: var(--ink-soft);
+  }
+  .task-sub{
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .task-tag{
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--tech-blue);
+    border: 1px solid var(--tech-blue);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+
+  /* ---- Notes ---- */
+  .notes{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-top: 18px;
+  }
+  .notes h3{
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: var(--pitch-dark);
+  }
+  .notes textarea{
+    width: 100%;
+    min-height: 70px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    resize: vertical;
+    background: var(--chalk);
+    color: var(--ink);
+  }
+
+  .status-line{
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 18px;
+  }
+
+  @media (max-width: 480px){
+    .masthead{ flex-direction: column; align-items:flex-start; gap: 10px; }
+    .scoreboard{ flex-direction: column; align-items: stretch; }
+    .score-main{ font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div>
+      <h1>Match Week</h1>
+      <div class="sub">english training log — seg a sex</div>
+    </div>
+    <button class="kickoff-btn" id="resetBtn">Começar nova semana</button>
+  </div>
+
+  <div class="scoreboard">
+    <div class="score-main" id="scoreMain">0<span>/12</span></div>
+    <div class="score-detail" style="flex:1">
+      <div><strong id="daysFullCount">0</strong> de 5 dias completos</div>
+      <div id="streakLine">Sem sequência ainda</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div id="daysContainer"></div>
+
+  <div class="notes">
+    <h3>Anotações do intervalo</h3>
+    <textarea id="notesArea" placeholder="Vocabulário novo, dificuldades, música ou podcast que curtiu..."></textarea>
+  </div>
+
+  <div class="status-line" id="statusLine">carregando...</div>
+</div>
+
+<script>
+// ==== PREENCHA AQUI (JSONBin.io) ====
+// 1. Crie conta grátis em jsonbin.io
+// 2. Crie um bin novo com o conteúdo: {}
+// 3. Cole aqui o BIN_ID (aparece na URL do bin) e sua X-Master-Key (em API Keys no painel)
+const JSONBIN_BIN_ID = '6aa0b4f3ffd5d16053ef78b4';
+const JSONBIN_API_KEY = '$2a$10$FAmreLLMm4bkbfCE5rTSfuz/uTK2ZpKO7rKbEh5QYgB5LQYFrFZ5a';
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+
+
+const PLAN = [
+  { key: 'seg', name: 'Segunda', tasks: [
+      { id: 'seg-reading', label: 'Reading — notícia de futebol ou tech', sub: '30 min', tag: 'READING' },
+      { id: 'seg-listening', label: 'Listening — podcast no deslocamento', sub: 'trajeto', tag: 'LISTENING' },
+  ]},
+  { key: 'ter', name: 'Terça', tasks: [
+      { id: 'ter-writing', label: 'Writing com música (ditado + resumo + frases)', sub: '30 min', tag: 'WRITING' },
+      { id: 'ter-speaking', label: 'Speaking — reuniões e negociação', sub: '1h · plataforma', tag: 'SPEAKING' },
+  ]},
+  { key: 'qua', name: 'Quarta', tasks: [
+      { id: 'qua-reading', label: 'Reading — técnico ou análise tática', sub: '30 min', tag: 'READING' },
+      { id: 'qua-listening', label: 'Listening — música ou podcast técnico', sub: 'trajeto', tag: 'LISTENING' },
+  ]},
+  { key: 'qui', name: 'Quinta', tasks: [
+      { id: 'qui-writing', label: 'Writing — relatório ou apresentação', sub: '30 min', tag: 'WRITING' },
+      { id: 'qui-speaking', label: 'Speaking — apresentações e storytelling', sub: '1h · plataforma', tag: 'SPEAKING' },
+  ]},
+  { key: 'sex', name: 'Sexta', tasks: [
+      { id: 'sex-listening', label: 'Listening — livre, o que você mais curtiu', sub: 'trajeto', tag: 'LISTENING' },
+      { id: 'sex-writing', label: 'Writing leve — vocabulário da semana', sub: '30 min', tag: 'WRITING' },
+  ]},
+];
+
+const TOTAL_TASKS = PLAN.reduce((acc, d) => acc + d.tasks.length, 0);
+
+let state = null;
+
+function defaultState(){
+  const checked = {};
+  PLAN.forEach(d => d.tasks.forEach(t => checked[t.id] = false));
+  return { checked, notes: '', weekStreak: 0, lastWeekFullyDone: false };
+}
+
+async function loadState(){
+  try{
+    const res = await fetch(`${JSONBIN_URL}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_API_KEY }
+    });
+    if(res.ok){
+      const json = await res.json();
+      const parsed = json.record || {};
+      const merged = defaultState();
+      Object.assign(merged.checked, parsed.checked || {});
+      merged.notes = parsed.notes || '';
+      merged.weekStreak = parsed.weekStreak || 0;
+      merged.lastWeekFullyDone = parsed.lastWeekFullyDone || false;
+      return merged;
+    }
+  }catch(e){
+    console.log('Sem dado salvo ainda, iniciando do zero.', e);
+  }
+  return defaultState();
+}
+
+async function saveState(){
+  try{
+    const res = await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_API_KEY
+      },
+      body: JSON.stringify(state)
+    });
+    setStatus(res.ok ? 'salvo ✓ (sincronizado)' : 'erro ao salvar — confira o BIN_ID/API_KEY');
+  }catch(e){
+    setStatus('erro de conexão ao salvar — tente novamente');
+    console.error(e);
+  }
+}
+
+function setStatus(msg){
+  document.getElementById('statusLine').textContent = msg;
+}
+
+function countChecked(){
+  return Object.values(state.checked).filter(Boolean).length;
+}
+
+function daysFullyDone(){
+  return PLAN.filter(d => d.tasks.every(t => state.checked[t.id])).length;
+}
+
+function render(){
+  const container = document.getElementById('daysContainer');
+  container.innerHTML = '';
+
+  PLAN.forEach(day => {
+    const allDone = day.tasks.every(t => state.checked[t.id]);
+    const doneCount = day.tasks.filter(t => state.checked[t.id]).length;
+
+    const dayEl = document.createElement('div');
+    dayEl.className = 'day';
+
+    const head = document.createElement('div');
+    head.className = 'day-head' + (allDone ? ' done' : '');
+    head.innerHTML = `
+      <span class="day-name">${day.name}</span>
+      <span class="day-meta">${doneCount}/${day.tasks.length}${allDone ? ' ✓' : ''}</span>
+    `;
+
+    const tasksWrap = document.createElement('div');
+    tasksWrap.className = 'day-tasks';
+
+    day.tasks.forEach(task => {
+      const row = document.createElement('div');
+      row.className = 'task';
+      const checked = state.checked[task.id];
+      row.innerHTML = `
+        <input type="checkbox" ${checked ? 'checked' : ''} data-id="${task.id}">
+        <div class="task-text">
+          <div class="task-label ${checked ? 'checked' : ''}">${task.label}<span class="task-tag">${task.tag}</span></div>
+          <div class="task-sub">${task.sub}</div>
+        </div>
+      `;
+      tasksWrap.appendChild(row);
+    });
+
+    dayEl.appendChild(head);
+    dayEl.appendChild(tasksWrap);
+    container.appendChild(dayEl);
+  });
+
+  container.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', async (e) => {
+      const id = e.target.getAttribute('data-id');
+      state.checked[id] = e.target.checked;
+      render();
+      updateScoreboard();
+      await saveState();
+    });
+  });
+
+  document.getElementById('notesArea').value = state.notes;
+}
+
+function updateScoreboard(){
+  const checkedCount = countChecked();
+  const fullDays = daysFullyDone();
+  document.getElementById('scoreMain').innerHTML = `${checkedCount}<span>/${TOTAL_TASKS}</span>`;
+  document.getElementById('daysFullCount').textContent = fullDays;
+  document.getElementById('progressFill').style.width = `${(checkedCount / TOTAL_TASKS) * 100}%`;
+
+  const streakLine = document.getElementById('streakLine');
+  if(state.weekStreak > 0){
+    streakLine.textContent = `Sequência de ${state.weekStreak} semana(s) completa(s)`;
+  } else {
+    streakLine.textContent = 'Sem sequência ainda';
+  }
+}
+
+async function resetWeek(){
+  const fullyDone = daysFullyDone() === PLAN.length;
+  const newStreak = fullyDone ? state.weekStreak + 1 : 0;
+
+  state = defaultState();
+  state.weekStreak = newStreak;
+  state.lastWeekFullyDone = fullyDone;
+
+  render();
+  updateScoreboard();
+  await saveState();
+  setStatus(fullyDone ? 'semana completa! sequência atualizada ✓' : 'nova semana iniciada');
+}
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(confirm('Isso vai zerar as tarefas marcadas para começar uma nova semana. Continuar?')){
+    resetWeek();
+  }
+});
+
+let notesTimer = null;
+document.getElementById('notesArea').addEventListener('input', (e) => {
+  state.notes = e.target.value;
+  clearTimeout(notesTimer);
+  notesTimer = setTimeout(saveState, 600);
+});
+
+(async function init(){
+  setStatus('carregando...');
+  state = await loadState();
+  render();
+  updateScoreboard();
+  setStatus('pronto — seus dados ficam salvos automaticamente');
+})();
+</script>
+</body>
+</html>
